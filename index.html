@@ -1,1 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobTracker Pro</title>
 
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>📋 JobTracker Pro</h1>
+    <p>Suivi des candidatures</p>
+</header>
+
+<div class="container">
+
+    <div class="stats">
+
+        <div class="stat-card">
+            <h3>Total</h3>
+            <div id="total" class="stat-value">0</div>
+        </div>
+
+        <div class="stat-card">
+            <h3>Entretiens</h3>
+            <div id="entretiens" class="stat-value">0</div>
+        </div>
+
+        <div class="stat-card">
+            <h3>Offres</h3>
+            <div id="offres" class="stat-value">0</div>
+        </div>
+
+        <div class="stat-card">
+            <h3>Taux entretien</h3>
+            <div id="taux" class="stat-value">0%</div>
+        </div>
+
+    </div>
+
+    <div class="toolbar">
+
+        <input
+            id="company"
+            placeholder="Entreprise">
+
+        <input
+            id="position"
+            placeholder="Poste">
+
+        <select id="priority">
+            <option>Faible</option>
+            <option selected>Moyenne</option>
+            <option>Haute</option>
+        </select>
+
+        <button
+            class="btn"
+            onclick="addCandidate()">
+            Ajouter
+        </button>
+
+    </div>
+
+    <div class="toolbar">
+
+        <input
+            id="recruiter"
+            placeholder="Recruteur">
+
+        <input
+            id="email"
+            placeholder="Email">
+
+        <input
+            id="salary"
+            placeholder="Salaire">
+
+        <input
+            id="followup"
+            type="date">
+
+    </div>
+
+    <textarea
+        id="notes"
+        placeholder="Notes d'entretien"></textarea>
+
+    <div class="actions-bar">
+
+        <button
+            class="btn"
+            onclick="exportData()">
+            Export JSON
+        </button>
+
+        <label class="btn">
+            Import JSON
+            <input
+                id="importFile"
+                type="file"
+                hidden>
+        </label>
+
+    </div>
+
+    <div class="board">
+
+        <div class="column">
+            <h2>À envoyer</h2>
+            <div id="col0"></div>
+        </div>
+
+        <div class="column">
+            <h2>Envoyée</h2>
+            <div id="col1"></div>
+        </div>
+
+        <div class="column">
+            <h2>Entretien</h2>
+            <div id="col2"></div>
+        </div>
+
+        <div class="column">
+            <h2>Offre</h2>
+            <div id="col3"></div>
+        </div>
+
+        <div class="column">
+            <h2>Refus</h2>
+            <div id="col4"></div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
