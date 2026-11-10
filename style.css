@@ -1,38 +1,133 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JobTracker Pro</title>
+:root{
+  --blue:#2563eb;
+  --bg:#f3f4f6;
+  --card:#ffffff;
+  --text:#111827;
+}
 
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
-<header>
-    <h1>📋 JobTracker Pro</h1>
-    <p>Suivi des candidatures</p>
-</header>
+body{
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
 
-<div class="container">
+header{
+  background:var(--blue);
+  color:white;
+  padding:20px;
+}
 
-    <div class="stats">
+.container{
+  padding:20px;
+  max-width:1400px;
+  margin:auto;
+}
 
-        <div class="stat-card">
-            <h3>Total</h3>
-            <div id="total" class="stat-value">0</div>
-        </div>
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:15px;
+  margin-bottom:20px;
+}
 
-        <div class="stat-card">
-            <h3>Entretiens</h3>
-            <div id="entretiens" class="stat-value">0</div>
-        </div>
+.stat-card{
+  background:white;
+  border-radius:10px;
+  padding:15px;
+  box-shadow:0 2px 4px rgba(0,0,0,.1);
+}
 
-        <div class="stat-card">
-            <h3>Offres</h3>
-            <div id="offres" class="stat-value">0</div>
-        </div>
+.stat-value{
+  font-size:28px;
+  font-weight:bold;
+  margin-top:8px;
+}
 
-        <div class="stat-card">
-            <h3>Taux entretien</h3>
-            <div
+.toolbar{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:10px;
+  margin-bottom:15px;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:10px;
+  border:1px solid #d1d5db;
+  border-radius:8px;
+}
+
+textarea{
+  margin-bottom:20px;
+  min-height:90px;
+}
+
+.btn{
+  background:#2563eb;
+  color:white;
+  border:none;
+  border-radius:8px;
+  padding:10px;
+  cursor:pointer;
+}
+
+.actions-bar{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.board{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:15px;
+}
+
+.column{
+  background:#e5e7eb;
+  border-radius:10px;
+  padding:10px;
+  min-height:400px;
+}
+
+.column h2{
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.job{
+  background:white;
+  border-radius:8px;
+  padding:10px;
+  margin-bottom:10px;
+  box-shadow:0 1px 4px rgba(0,0,0,.1);
+}
+
+.company{
+  font-weight:bold;
+  font-size:15px;
+}
+
+.position{
+  margin-top:5px;
+}
+
+.meta{
+  font-size:12px;
+  color:#666;
+  margin-top:4px;
+}
+
+@media(max-width:900px){
+  .board{
+    grid-template-columns:1fr;
+  }
+}
