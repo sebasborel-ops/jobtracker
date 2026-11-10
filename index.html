@@ -1,1 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobTracker</title>
 
+    <style>
+        body{
+            font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+            margin:0;
+            background:#f4f6f9;
+            color:#222;
+        }
+
+        header{
+            background:#2563eb;
+            color:white;
+            padding:20px;
+        }
+
+        .container{
+            max-width:1400px;
+            margin:auto;
+            padding:20px;
+        }
+
+        .stats{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+            gap:15px;
+            margin-bottom:25px;
+        }
+
+        .card{
+            background:white;
+            border-radius:10px;
+            padding:15px;
+            box-shadow:0 1px 4px rgba(0,0,0,.1);
+        }
+
+        .card h3{
+            margin:0;
+            color:#666;
+            font-size:14px;
+        }
+
+        .value{
+            font-size:28px;
+            font-weight:bold;
+            margin-top:8px;
+        }
+
+        .form{
+            display:grid;
+            grid-template-columns:2fr 2fr 1fr;
+            gap:10px;
+            margin-bottom:25px;
+        }
+
+        input,button{
+            padding:12px;
+            border-radius:8px;
+            border:1px solid #ccc;
+        }
+
+        button{
+            background:#2563eb;
+            color:white;
+            border:none;
+            cursor:pointer;
+        }
+
+        .board{
+            display:grid;
+            grid-template-columns:repeat(5,1fr);
+            gap:15px;
+        }
+
+        .column{
+            background:#e9edf3;
+            border-radius:10px;
+            padding:12px;
+            min-height:400px;
+        }
+
+        .column h2{
+            font-size:16px;
+            text-align:center;
+        }
+
+        .job{
+            background:white;
+            border-radius:8px;
+            padding:10px;
+            margin-bottom:10px;
+            box-shadow:0 1px 3px rgba(0,0,0,.15);
+        }
+
+        .job strong{
+            display:block;
+        }
+
+        .actions{
+            margin-top:10px;
+            display:flex;
+            gap:5px;
+        }
+
+        .actions button{
+            flex:1;
+            padding:6px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>📋 JobTracker</h1>
+    <p>Suivi de candidatures</p>
+</header>
+
+<div class="container">
+
+    <div class="stats">
+        <div class="card">
+            <h3>Total</h3>
+            <div id="total" class="value">0</div>
+        </div>
+
+        <div class="card">
+            <h3>Entretiens</h3>
+            <div id="entretiens" class="value">0</div>
+        </div>
+
+        <div class="card">
+            <h3>Offres</h3>
+            <div id="offres" class="value">0</div>
+        </div>
+
+        <div class="card">
+            <h3>Taux entretien</h3>
+            <div id="taux" class="value">0%</div>
+        </div>
+    </div>
+
+    <div class="form">
+        <input id="company" placeholder="Entreprise">
+        <input id="job" placeholder="Poste">
+        <button onclick="addJob()">Ajouter</button>
+    </div>
+
+    <div class="board">
+
+        <div class="column">
+            <h2>À envoyer</h2>
+            <div id="col0"></div>
+        </div>
+
+        <div class="column">
+            <h2>Envoyée</h2>
+            <div id="col1"></div>
+        </div>
+
+        <div class="column">
+            <h2>Entretien</h2>
+            <div id="col2"></div>
+        </div>
+
+        <div class="column">
+            <h2>Offre</h2>
+            <div id="col3"></div>
+        </div>
+
+        <div class="column">
+            <h2>Refus</h2>
+            <div id="col4"></div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+let jobs = JSON.parse(localStorage.getItem("jobtracker") || "[]");
+
+function save(){
+    localStorage.setItem("jobtracker",JSON.stringify(jobs));
+}
+
+function updateStats(){
+
+    let entretien = jobs.filter(j=>j.status===2).length;
+    let offre = jobs.filter(j=>j.status===3).length;
+
+    document.getElementById("total").textContent=jobs.length;
+    document.getElementById("entretiens").textContent=entretien;
+    document.getElementById("offres").textContent=offre;
+
+    let taux=jobs.length
+        ? Math.round(entretien/jobs.length*100)
+        : 0;
+
+    document.getElementById("taux").textContent=taux+"%";
+}
+
+function render(){
+
+    for(let i=0;i<5;i++){
+        document.getElementById("col"+i).innerHTML="";
+    }
+
+    jobs.forEach(job=>{
+
+        const div=document.createElement("div");
+        div.className="job";
+
+        div.innerHTML=`
+            <strong>${job.company}</strong>
+            ${job.position}
+        `;
+
+        const actions=document.createElement("div");
+        actions.className="actions";
+
+        if(job.status>0){
+
+            const left=document.createElement("button");
+            left.textContent="◀";
+            left.onclick=()=>{
+                job.status--;
+                save();
+                render();
+            };
+
+            actions.appendChild(left);
+        }
+
+        if(job.status<4){
+
+            const right=document.createElement("button");
+            right.textContent="▶";
+
+            right.onclick=()=>{
+                job.status++;
+                save();
+                render();
+            };
+
+            actions.appendChild(right);
+        }
+
+        div.appendChild(actions);
+
+        document
+            .getElementById("col"+job.status)
+            .appendChild(div);
+    });
+
+    updateStats();
+}
+
+function addJob(){
+
+    const company =
+        document.getElementById("company").value.trim();
+
+    const position =
+        document.getElementById("job").value.trim();
+
+    if(!company || !position){
+        return;
+    }
+
+    jobs.push({
+        company,
+        position,
+        status:0
+    });
+
+    save();
+
+    document.getElementById("company").value="";
+    document.getElementById("job").value="";
+
+    render();
+}
+
+render();
+
+</script>
+
+</body>
+</html>
