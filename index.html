@@ -1,154 +1,136 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JobTracker</title>
+    <title>JobTracker Pro</title>
 
-    <style>
-        body{
-            font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-            margin:0;
-            background:#f4f6f9;
-            color:#222;
-        }
-
-        header{
-            background:#2563eb;
-            color:white;
-            padding:20px;
-        }
-
-        .container{
-            max-width:1400px;
-            margin:auto;
-            padding:20px;
-        }
-
-        .stats{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-            gap:15px;
-            margin-bottom:25px;
-        }
-
-        .card{
-            background:white;
-            border-radius:10px;
-            padding:15px;
-            box-shadow:0 1px 4px rgba(0,0,0,.1);
-        }
-
-        .card h3{
-            margin:0;
-            color:#666;
-            font-size:14px;
-        }
-
-        .value{
-            font-size:28px;
-            font-weight:bold;
-            margin-top:8px;
-        }
-
-        .form{
-            display:grid;
-            grid-template-columns:2fr 2fr 1fr;
-            gap:10px;
-            margin-bottom:25px;
-        }
-
-        input,button{
-            padding:12px;
-            border-radius:8px;
-            border:1px solid #ccc;
-        }
-
-        button{
-            background:#2563eb;
-            color:white;
-            border:none;
-            cursor:pointer;
-        }
-
-        .board{
-            display:grid;
-            grid-template-columns:repeat(5,1fr);
-            gap:15px;
-        }
-
-        .column{
-            background:#e9edf3;
-            border-radius:10px;
-            padding:12px;
-            min-height:400px;
-        }
-
-        .column h2{
-            font-size:16px;
-            text-align:center;
-        }
-
-        .job{
-            background:white;
-            border-radius:8px;
-            padding:10px;
-            margin-bottom:10px;
-            box-shadow:0 1px 3px rgba(0,0,0,.15);
-        }
-
-        .job strong{
-            display:block;
-        }
-
-        .actions{
-            margin-top:10px;
-            display:flex;
-            gap:5px;
-        }
-
-        .actions button{
-            flex:1;
-            padding:6px;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header>
-    <h1>📋 JobTracker</h1>
-    <p>Suivi de candidatures</p>
+    <h1>📋 JobTracker Pro</h1>
+    <p>Gestionnaire professionnel de candidatures</p>
 </header>
 
 <div class="container">
 
     <div class="stats">
-        <div class="card">
+
+        <div class="stat-card">
             <h3>Total</h3>
-            <div id="total" class="value">0</div>
+            <div id="total" class="stat-value">0</div>
         </div>
 
-        <div class="card">
+        <div class="stat-card">
             <h3>Entretiens</h3>
-            <div id="entretiens" class="value">0</div>
+            <div id="entretiens" class="stat-value">0</div>
         </div>
 
-        <div class="card">
+        <div class="stat-card">
             <h3>Offres</h3>
-            <div id="offres" class="value">0</div>
+            <div id="offres" class="stat-value">0</div>
         </div>
 
-        <div class="card">
+        <div class="stat-card">
             <h3>Taux entretien</h3>
-            <div id="taux" class="value">0%</div>
+            <div id="taux" class="stat-value">0%</div>
         </div>
+
     </div>
 
-    <div class="form">
-        <input id="company" placeholder="Entreprise">
-        <input id="job" placeholder="Poste">
-        <button onclick="addJob()">Ajouter</button>
+    <div class="search">
+        <input
+            id="search"
+            type="text"
+            placeholder="🔍 Rechercher une entreprise ou un poste">
+    </div>
+
+    <div class="toolbar">
+
+        <input
+            id="company"
+            placeholder="Entreprise">
+
+        <input
+            id="position"
+            placeholder="Poste">
+
+        <select id="priority">
+            <option>Faible</option>
+            <option selected>Moyenne</option>
+            <option>Haute</option>
+        </select>
+
+        <button
+            class="btn"
+            onclick="createJob()">
+            Ajouter
+        </button>
+
+    </div>
+
+    <div class="toolbar">
+
+        <input
+            id="recruiter"
+            placeholder="Nom du recruteur">
+
+        <input
+            id="email"
+            placeholder="Email recruteur">
+
+        <input
+            id="salary"
+            placeholder="Salaire">
+
+        <input
+            id="followup"
+            type="date">
+
+    </div>
+
+    <div style="margin-bottom:20px">
+
+        <textarea
+            id="notes"
+            placeholder="Notes d'entretien, commentaires, suivi..."></textarea>
+
+    </div>
+
+    <div class="actions-bar">
+
+        <button
+            class="btn"
+            onclick="exportData()">
+
+            📥 Export JSON
+
+        </button>
+
+        <label class="btn">
+
+            📤 Import JSON
+
+            <input
+                id="importFile"
+                type="file"
+                accept=".json"
+                hidden>
+
+        </label>
+
+        <button
+            class="btn"
+            onclick="toggleDarkMode()">
+
+            🌙 Mode sombre
+
+        </button>
+
     </div>
 
     <div class="board">
@@ -182,115 +164,60 @@
 
 </div>
 
+<script src="app.js"></script>
+
 <script>
 
-let jobs = JSON.parse(localStorage.getItem("jobtracker") || "[]");
+function createJob() {
 
-function save(){
-    localStorage.setItem("jobtracker",JSON.stringify(jobs));
-}
+    addJob({
 
-function updateStats(){
+        company:
+            document.getElementById("company").value,
 
-    let entretien = jobs.filter(j=>j.status===2).length;
-    let offre = jobs.filter(j=>j.status===3).length;
+        position:
+            document.getElementById("position").value,
 
-    document.getElementById("total").textContent=jobs.length;
-    document.getElementById("entretiens").textContent=entretien;
-    document.getElementById("offres").textContent=offre;
+        recruiter:
+            document.getElementById("recruiter").value,
 
-    let taux=jobs.length
-        ? Math.round(entretien/jobs.length*100)
-        : 0;
+        email:
+            document.getElementById("email").value,
 
-    document.getElementById("taux").textContent=taux+"%";
-}
+        salary:
+            document.getElementById("salary").value,
 
-function render(){
+        followup:
+            document.getElementById("followup").value,
 
-    for(let i=0;i<5;i++){
-        document.getElementById("col"+i).innerHTML="";
-    }
+        priority:
+            document.getElementById("priority").value,
 
-    jobs.forEach(job=>{
+        notes:
+            document.getElementById("notes").value
 
-        const div=document.createElement("div");
-        div.className="job";
-
-        div.innerHTML=`
-            <strong>${job.company}</strong>
-            ${job.position}
-        `;
-
-        const actions=document.createElement("div");
-        actions.className="actions";
-
-        if(job.status>0){
-
-            const left=document.createElement("button");
-            left.textContent="◀";
-            left.onclick=()=>{
-                job.status--;
-                save();
-                render();
-            };
-
-            actions.appendChild(left);
-        }
-
-        if(job.status<4){
-
-            const right=document.createElement("button");
-            right.textContent="▶";
-
-            right.onclick=()=>{
-                job.status++;
-                save();
-                render();
-            };
-
-            actions.appendChild(right);
-        }
-
-        div.appendChild(actions);
-
-        document
-            .getElementById("col"+job.status)
-            .appendChild(div);
     });
 
-    updateStats();
+    location.reload();
 }
 
-function addJob(){
+function toggleDarkMode() {
 
-    const company =
-        document.getElementById("company").value.trim();
+    document.body
+        .classList
+        .toggle("dark");
 
-    const position =
-        document.getElementById("job").value.trim();
-
-    if(!company || !position){
-        return;
-    }
-
-    jobs.push({
-        company,
-        position,
-        status:0
-    });
-
-    save();
-
-    document.getElementById("company").value="";
-    document.getElementById("job").value="";
-
-    render();
 }
 
-render();
+document
+.getElementById("importFile")
+.addEventListener(
+    "change",
+    e => importData(e.target.files[0])
+);
 
 </script>
 
 </body>
+
 </html>
